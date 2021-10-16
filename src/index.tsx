@@ -35,11 +35,11 @@ export default function ArticleList() {
                     onAction={async () => {
                       showToast(ToastStyle.Animated, "Running...");
                       Promise.resolve(onAction!())
-                        .then(() => {
-                          showToast(ToastStyle.Success, "Done");
+                        .then((result) => {
+                          showToast(ToastStyle.Success, typeof result === "string" ? result : "Done");
                         })
-                        .catch(() => {
-                          showToast(ToastStyle.Failure, "Failed");
+                        .catch((error) => {
+                          showToast(ToastStyle.Failure, typeof error === "string" ? error : "Failed");
                         });
                     }}
                   />
