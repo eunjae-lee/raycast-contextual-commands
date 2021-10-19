@@ -2,9 +2,11 @@ import { Command } from "./types";
 import { reviewPR } from "./commands/reviewPR";
 import { reviewIssue } from "./commands/reviewIssue";
 import { timeBlock } from "./commands/timeBlock";
+import { openPRInCode } from "./commands/openPRInCode";
 import { openRepoInCode } from "./commands/openRepoInCode";
+import { livingRoomNetflix } from "./commands/livingRoomNetflix";
 
-const list = [reviewPR, reviewIssue, timeBlock, openRepoInCode];
+const list = [reviewPR, reviewIssue, timeBlock, openPRInCode, openRepoInCode, livingRoomNetflix];
 
 export async function getCommands(): Promise<Command[]> {
   const validMap: Record<number, boolean> = {};

@@ -1,22 +1,22 @@
-import tempWrite from "temp-write";
 import { ContextualCommands } from "../types";
 import { runShellScript, runAppleScript } from "../helpers";
-import config from "../config";
 
-export const timeBlock: ContextualCommands = {
+export const livingRoomNetflix: ContextualCommands = {
   valid: () => {
-    return new Date().getHours() <= 12;
+    const day = new Date().getDay();
+    const hours = new Date().getHours();
+    return day === 0 || day === 6 || (12 <= hours && hours <= 14) || 18 <= hours;
   },
   getCommands: () => {
     return [
       {
         listItem: {
-          title: "📆 Create time blockers in calendar",
+          title: "🎞 Netflix",
         },
         actionPanelItems: [
           {
-            title: "Update Calendar",
-            onAction: updateCalendar,
+            title: "Netflix",
+            onAction: netflix,
           },
         ],
       },
@@ -24,31 +24,25 @@ export const timeBlock: ContextualCommands = {
   },
 };
 
-async function updateCalendar() {
-  const queryPath = tempWrite.sync(`
-    SELECT TMTask.uuid,
-          TMTask.title,
-          substr(TMTag.title, 3, length(TMTag.title) - 3) AS tag
-    FROM TMTask,
-            TMTaskTag,
-            TMTag
-    WHERE TMTask.trashed = 0 AND
-            TMTask.status = 0 AND
-            TMTask.type = 0 AND 
-            TMTask.start = 1 AND
-            TMTask.startdate IS NOT NULL AND
-            TMTask.uuid = TMTaskTag.tasks AND 
-            TMTag.uuid = TMTaskTag.tags AND 
-            TMTag.title LIKE '⏱%';
-  `);
+async function netflix() {
+  const shellScript = `
+  sqlite3 ~/Library/Group\\ Containers/JLMPQHK86H.com.culturedcode.ThingsMac/Things\\ Database.thingsdatabase/main.sqlite " \\
+  SELECT TMTask.uuid, \\
+         TMTask.title, \\
+         substr(TMTag.title, 3, length(TMTag.title) - 3) AS tag \\
+    FROM TMTask, \\
+         TMTaskTag, \\
+         TMTag \\
+   WHERE TMTask.trashed = 0 AND \\
+         TMTask.status = 0 AND \\
+         TMTask.type = 0 AND  \\
+         TMTask.start = 1 AND \\
+         TMTask.startdate IS NOT NULL AND \\
+         TMTask.uuid = TMTaskTag.tasks AND  \\
+         TMTag.uuid = TMTaskTag.tags AND  \\
+         TMTag.title LIKE '⏱%';"  
+    `;
 
-  const scriptFilePath = tempWrite.sync(`
-  cat ${queryPath} | /usr/bin/sqlite3 ${config.homedir}/Library/Group\\ Containers/JLMPQHK86H.com.culturedcode.ThingsMac/Things\\ Database.thingsdatabase/main.sqlite
-  `);
-
-  const shellScript = `bash ${scriptFilePath}`;
-
-  await runShellScript(shellScript);
   const result = await runShellScript(shellScript);
 
   const tasks = result
@@ -69,7 +63,7 @@ async function updateCalendar() {
       set hours of theStartDate to 10
         set minutes of theStartDate to 0
       set theEndDate to theStartDate + ((${task.minutes} - 1) * minutes)
-
+  
       tell application "Calendar"
       tell calendar "Tasks"
         make new event with properties {summary:${JSON.stringify(
