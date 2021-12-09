@@ -81,7 +81,7 @@ async function updateCalendar() {
     runAppleScript(appleScript);
   });
 
-  runShellScript("open /System/Applications/Calendar.app");
+  runShellScript("open /Applications/Cron.app");
 
   return "Created " + tasks.length + " events";
 }

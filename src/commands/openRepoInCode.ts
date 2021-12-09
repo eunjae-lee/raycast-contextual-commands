@@ -36,5 +36,5 @@ async function openRepo() {
     runShellScript(`cd ${workspace} && git clone ${sshUrl}`);
   }
 
-  runShellScript(`code ${workspace}/${repo}`);
+  runShellScript(`/usr/local/bin/code ${workspace}/${repo}`);
 }
