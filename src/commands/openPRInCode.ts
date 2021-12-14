@@ -37,6 +37,6 @@ async function openPR() {
     runShellScript(`cd ${workspace} && git clone ${sshUrl}`);
   }
 
-  runShellScript(`cd ${workspace}/${repo} && gh pr checkout ${prNumber}`);
+  runShellScript(`cd ${workspace}/${repo} && /usr/local/bin/gh pr checkout ${prNumber}`);
   runShellScript(`/usr/local/bin/code ${workspace}/${repo}`);
 }
